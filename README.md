@@ -1,5 +1,10 @@
 # Agentic Hiring Assistant
 
+**Stack:** Python, Google ADK, Vertex AI, Cloud Run, Firestore, Pub/Sub, Go, TypeScript
+
+**Skills:** LLM agents, tool calling, workflow orchestration, API design
+
+
 A hiring product for small-business hirers. Python and Google ADK run the agents on Google Cloud (Vertex AI, Cloud Run, Firestore, Pub/Sub, Cloud Workflows). Go is the public API and the chat stream. TypeScript is the hirer chat and the candidate page.
 
 Specialist agents help a hirer write and improve a job ad, shortlist candidates fairly, schedule interviews, and onboard a new hire. The focus is the engineering around the agents: evaluation, security, cost control, reliability, observability, and framework independence.

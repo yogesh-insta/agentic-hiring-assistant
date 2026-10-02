@@ -1,0 +1,17 @@
+[
+  {"id": "j1", "human": "grounded", "judge": "grounded"},
+  {"id": "j2", "human": "grounded", "judge": "grounded"},
+  {"id": "j3", "human": "grounded", "judge": "grounded"},
+  {"id": "j4", "human": "ungrounded", "judge": "ungrounded"},
+  {"id": "j5", "human": "grounded", "judge": "grounded"},
+  {"id": "j6", "human": "grounded", "judge": "grounded"},
+  {"id": "j7", "human": "ungrounded", "judge": "ungrounded"},
+  {"id": "j8", "human": "grounded", "judge": "grounded"},
+  {"id": "j9", "human": "grounded", "judge": "grounded"},
+  {"id": "j10", "human": "grounded", "judge": "ungrounded"},
+  {"id": "j11", "human": "grounded", "judge": "grounded"},
+  {"id": "j12", "human": "ungrounded", "judge": "ungrounded"},
+  {"id": "j13", "human": "grounded", "judge": "grounded"},
+  {"id": "j14", "human": "grounded", "judge": "grounded"},
+  {"id": "j15", "human": "grounded", "judge": "grounded"}
+]

@@ -1,0 +1,5 @@
+{
+  "id": "coordinator-barista-week1",
+  "output": "You want a part-time barista in Fitzroy, weekends, about $32 an hour. Confirming a brief is a button, not a sentence in this chat. This reply does not start a hire.",
+  "question": "A question does not start a hire. There is no brief to confirm until you state the role, the place, the hours, and the pay."
+}

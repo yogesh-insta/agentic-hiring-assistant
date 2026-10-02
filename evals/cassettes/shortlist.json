@@ -1,0 +1,15 @@
+{
+  "prompt": "Score only weekend availability and years of coffee service. Cite a phrase from the redacted CV. Do not drop a candidate.",
+  "cases": [
+    {"id": "c1", "years": 3, "weekends": true, "redacted": "3 years weekends", "evidence": "3 years", "band": 5},
+    {"id": "c2", "years": 1, "weekends": true, "redacted": "1 year weekends", "evidence": "1 year", "band": 3},
+    {"id": "c3", "years": 4, "weekends": false, "redacted": "4 years weekdays", "evidence": "4 years", "band": 3},
+    {"id": "c4", "years": 0, "weekends": false, "redacted": "0 years weekdays", "evidence": "0 years", "band": 1},
+    {"id": "c5", "years": 2, "weekends": true, "redacted": "2 years weekends", "evidence": "2 years", "band": 5},
+    {"id": "c6", "years": 2, "weekends": false, "redacted": "2 years weekdays", "evidence": "2 years", "band": 3},
+    {"id": "c7", "years": 8, "weekends": true, "redacted": "8 years weekends", "evidence": "8 years", "band": 5},
+    {"id": "c8", "years": 1, "weekends": false, "redacted": "1 year weekdays", "evidence": "1 year", "band": 1},
+    {"id": "c9", "years": 5, "weekends": true, "redacted": "5 years weekends", "evidence": "5 years", "band": 5},
+    {"id": "c10", "years": 6, "weekends": false, "redacted": "6 years weekdays", "evidence": "6 years", "band": 3}
+  ]
+}

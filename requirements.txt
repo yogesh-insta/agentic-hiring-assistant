@@ -1,0 +1,6 @@
+pydantic>=2,<3
+opentelemetry-api>=1.27
+opentelemetry-sdk>=1.27
+google-cloud-firestore>=2.16,<3
+google-cloud-pubsub>=2.21,<3
+google-auth>=2.29,<3

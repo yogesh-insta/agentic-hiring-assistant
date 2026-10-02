@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // The browser never reads these. The API uses a service account.
+    match /callbacks/{id} {
+      allow read, write: if false;
+    }
+    match /audit/{id} {
+      allow read, write: if false;
+    }
+    match /workflows/{id} {
+      allow read, write: if false;
+    }
+    match /artifacts/{id} {
+      allow read, write: if false;
+    }
+    match /applications/{id} {
+      allow read, write: if false;
+    }
+    match /interviews/{id} {
+      allow read, write: if false;
+    }
+    match /approvals/{id} {
+      allow read, write: if false;
+    }
+  }
+}

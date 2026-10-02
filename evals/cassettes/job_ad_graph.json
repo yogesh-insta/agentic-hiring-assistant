@@ -1,0 +1,475 @@
+{
+  "prompts": {
+    "writer": "Write a JobAd from the brief. Do not add a protected attribute.",
+    "reviewer": "Review the JobAd. Return a ReviewReport. Blocking issues are biased language and a missing pay line.",
+    "reviser": "Revise the JobAd using the ReviewReport. Return a JobAd."
+  },
+  "cases": [
+    {
+      "id": "barista-fitzroy",
+      "brief": {
+        "role": "barista",
+        "location": "Fitzroy",
+        "hours": "weekends, part-time",
+        "pay": "about $32 an hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Part-time barista",
+            "location": "Fitzroy",
+            "pay": "$32 per hour",
+            "hours": "Weekends, part-time",
+            "body": "Join our young, energetic team for weekend coffee service."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young, energetic team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the age proxy."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Part-time barista",
+            "location": "Fitzroy",
+            "pay": "$32 per hour",
+            "hours": "Weekends, part-time",
+            "body": "Weekend coffee service, the bar, and closing in Fitzroy."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "clerk-richmond",
+      "brief": {
+        "role": "clerk",
+        "location": "Richmond",
+        "hours": "weekdays",
+        "pay": "$28 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Shop clerk",
+            "location": "Richmond",
+            "pay": "$28 per hour",
+            "hours": "Weekdays",
+            "body": "Counter service and restocking on weekdays."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "cook-carlton",
+      "brief": {
+        "role": "cook",
+        "location": "Carlton",
+        "hours": "evenings",
+        "pay": "$30 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Cook",
+            "location": "Carlton",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 1 still says young team."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Cook",
+            "location": "Carlton",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 2 still says young team."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Cook",
+            "location": "Carlton",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 3 still says young team."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Cook",
+            "location": "Carlton",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 4 still says young team."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "waiter-fitzroy",
+      "brief": {
+        "role": "waiter",
+        "location": "Fitzroy",
+        "hours": "nights",
+        "pay": "award rate"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Waiter",
+            "location": "Fitzroy",
+            "pay": "competitive",
+            "hours": "Nights",
+            "body": "Floor service on night shifts."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "",
+                "kind": "missing_award",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "State the pay."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Waiter",
+            "location": "Fitzroy",
+            "pay": "Hospitality Award level 2",
+            "hours": "Nights",
+            "body": "Floor service on night shifts."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "barista-collingwood",
+      "brief": {
+        "role": "barista",
+        "location": "Collingwood",
+        "hours": "mornings",
+        "pay": "$32 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Barista",
+            "location": "Collingwood",
+            "pay": "competitive",
+            "hours": "Mornings",
+            "body": "A young, energetic team member for the morning bar."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young, energetic team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the age proxy and state the pay."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Barista",
+            "location": "Collingwood",
+            "pay": "$32 per hour",
+            "hours": "Mornings",
+            "body": "Morning coffee service at the bar."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "cashier-brunswick",
+      "brief": {
+        "role": "cashier",
+        "location": "Brunswick",
+        "hours": "weekdays",
+        "pay": "$27 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Cashier",
+            "location": "Brunswick",
+            "pay": "$27 per hour",
+            "hours": "Weekdays",
+            "body": "Take payments and balance the till."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "kitchen-hand-footscray",
+      "brief": {
+        "role": "kitchen hand",
+        "location": "Footscray",
+        "hours": "afternoons",
+        "pay": "$26 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Kitchen hand",
+            "location": "Footscray",
+            "pay": "$26 per hour",
+            "hours": "Afternoons",
+            "body": "Prep work for a young, energetic team."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "young, energetic team",
+                "kind": "biased",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the age proxy."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Kitchen hand",
+            "location": "Footscray",
+            "pay": "$26 per hour",
+            "hours": "Afternoons",
+            "body": "Prep, dishes, and closing the kitchen."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "supervisor-southbank",
+      "brief": {
+        "role": "supervisor",
+        "location": "Southbank",
+        "hours": "rotating",
+        "pay": "$35 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Shift supervisor",
+            "location": "Southbank",
+            "pay": "$35 per hour",
+            "hours": "Rotating",
+            "body": "Open the shift and lock up."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "driver-docklands",
+      "brief": {
+        "role": "driver",
+        "location": "Docklands",
+        "hours": "mornings",
+        "pay": "award rate"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Driver",
+            "location": "Docklands",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 1 still says ."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "",
+                "kind": "missing_award",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Driver",
+            "location": "Docklands",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 2 still says ."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "",
+                "kind": "missing_award",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Driver",
+            "location": "Docklands",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 3 still says ."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "",
+                "kind": "missing_award",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        },
+        {
+          "draft": {
+            "title": "Driver",
+            "location": "Docklands",
+            "pay": "$30 per hour",
+            "hours": "days",
+            "body": "Draft 4 still says ."
+          },
+          "review": {
+            "issues": [
+              {
+                "phrase": "",
+                "kind": "missing_award",
+                "blocking": true
+              }
+            ],
+            "suggested_edits": [
+              "Remove the blocking phrase."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "receptionist-cbd",
+      "brief": {
+        "role": "receptionist",
+        "location": "Melbourne CBD",
+        "hours": "weekdays",
+        "pay": "$30 per hour"
+      },
+      "iterations": [
+        {
+          "draft": {
+            "title": "Receptionist",
+            "location": "Melbourne CBD",
+            "pay": "$30 per hour",
+            "hours": "Weekdays",
+            "body": "Greet guests and manage the desk."
+          },
+          "review": {
+            "issues": [],
+            "suggested_edits": []
+          }
+        }
+      ]
+    }
+  ]
+}

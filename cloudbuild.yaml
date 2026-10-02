@@ -1,0 +1,33 @@
+# Build the three Cloud Run images. Push them before terraform apply.
+# The repository id matches google_artifact_registry_repository.hiring.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - services/api/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/hiring/api:$SHORT_SHA
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - services/agents/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/hiring/agents:$SHORT_SHA
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - worker/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/hiring/worker:$SHORT_SHA
+      - .
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/hiring/api:$SHORT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/hiring/agents:$SHORT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/hiring/worker:$SHORT_SHA
+substitutions:
+  _REGION: australia-southeast1

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hiring assistant</title>
+    <link rel="stylesheet" href="/dist/styles.css" />
+  </head>
+  <body>
+    <p class="banner">Synthetic data only. Do not upload a real CV.</p>
+    <main>
+      <section>
+        <h1>Hirer chat</h1>
+        <p id="live" aria-live="polite">Sign in to write a brief. Typed text cannot approve or start a hire.</p>
+        <button id="sign-hirer" type="button">Sign in as hirer</button>
+        <ol id="transcript"></ol>
+        <form id="composer">
+          <label for="message">Message</label>
+          <textarea id="message" disabled></textarea>
+          <button id="send" type="submit" disabled>Send</button>
+        </form>
+      </section>
+      <aside>
+        <h2>Hiring step</h2>
+        <p id="panel-status">No hiring step yet. Typed text cannot approve or start a hire.</p>
+        <div id="panel-actions"></div>
+        <article id="panel-ad" hidden></article>
+        <p><a href="/interview">Candidate page</a></p>
+      </aside>
+    </main>
+    <script type="module" src="/dist/chat.js"></script>
+  </body>
+</html>

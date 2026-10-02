@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  color: #1c1915;
+  background: #f6f3ee;
+}
+
+.banner {
+  margin: 0;
+  padding: 0.6rem 1rem;
+  background: #1c1915;
+  color: #f6f3ee;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 16rem;
+  gap: 1.5rem;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+h1, h2 {
+  font-weight: 600;
+}
+
+#transcript {
+  list-style: none;
+  padding: 0;
+  min-height: 8rem;
+}
+
+#transcript li {
+  margin: 0.5rem 0;
+  padding: 0.6rem 0.8rem;
+  background: #fff;
+  border: 1px solid #ddd6cc;
+}
+
+#transcript li[data-role="hirer"] {
+  background: #efeae2;
+}
+
+form {
+  display: grid;
+  gap: 0.4rem;
+}
+
+textarea {
+  min-height: 5rem;
+  font: inherit;
+  padding: 0.5rem;
+}
+
+button {
+  font: inherit;
+  padding: 0.4rem 0.8rem;
+  width: fit-content;
+}
+
+aside {
+  padding-top: 0.5rem;
+}
+
+#panel-ad {
+  background: #fff;
+  border: 1px solid #ddd6cc;
+  padding: 0.8rem;
+}
+
+#panel-actions {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.6rem 0;
+}
+
+@media (max-width: 40rem) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}

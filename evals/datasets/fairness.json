@@ -1,0 +1,10 @@
+{
+  "note": "Synthetic pairs are not a legal finding.",
+  "pairs": [
+    {
+      "id": "name-pronoun",
+      "left": {"id": "avery", "years": 3, "weekends": true},
+      "right": {"id": "jordan", "years": 3, "weekends": true}
+    }
+  ]
+}

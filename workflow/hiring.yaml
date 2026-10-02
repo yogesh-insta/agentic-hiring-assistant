@@ -1,0 +1,484 @@
+# Cloud Workflows source. The local runner stores these step ids.
+# It does not evaluate this file. Callback URLs are not written to logs.
+# call_job_ad timeout is longer than the 180s agent deadline.
+# await_* uses a 12h callback and retries TimeoutError until 14 waits (7 days).
+
+main:
+  params: [args]
+  steps:
+    - confirm_brief:
+        assign:
+          - step: "brief"
+          - agents_url: ${args.agents_url}
+          - workflow_id: ${args.workflow_id}
+          - ad_waits: 0
+          - shortlist_waits: 0
+          - schedule_waits: 0
+          - onboard_waits: 0
+          - hirer_revisions: 0
+    - call_job_ad:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/workflows"}
+          timeout: 200
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            brief: ${args.brief}
+        result: job_ad_http
+    - read_job_ad:
+        assign:
+          - approval_id: ${json.decode(job_ad_http.body).approvalId}
+    - create_ad_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: ad_callback
+    - store_ad_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "ad_approval"
+            url: ${ad_callback.url}
+    - await_ad_approval:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${ad_callback}
+            timeout: 43200
+          result: ad_decision
+        except:
+          as: e
+          steps:
+            - ad_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null and ad_waits < 14}
+                    next: count_ad_wait
+                  - condition: ${true}
+                    next: expire_ad
+    - route_ad_decision:
+        switch:
+          - condition: ${ad_decision.http_request.body.decision == "approve"}
+            next: approve_ad
+          - condition: ${true}
+            next: reject_ad
+    - approve_ad:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/approvals/" + approval_id + "/approve"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            decision: "approve"
+        next: create_publish_callback
+    - create_publish_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: publish_callback
+    - store_publish_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "publish"
+            url: ${publish_callback.url}
+    - await_publish:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${publish_callback}
+            timeout: 43200
+          result: publish_decision
+        except:
+          as: e
+          steps:
+            - publish_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null}
+                    next: create_publish_callback
+                  - condition: ${true}
+                    next: expire_ad
+    - reject_ad:
+        switch:
+          - condition: ${hirer_revisions >= 3}
+            next: manual_edit
+          - condition: ${true}
+            next: reject_ad_call
+    - publish:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/workflows/" + workflow_id + "/continue"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            action: "publish"
+        next: create_shortlist_request_callback
+    - create_shortlist_request_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: shortlist_request_callback
+    - store_shortlist_request_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "shortlist_request"
+            url: ${shortlist_request_callback.url}
+    - await_shortlist_request:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${shortlist_request_callback}
+            timeout: 43200
+          result: shortlist_request
+        except:
+          as: e
+          steps:
+            - shortlist_request_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null}
+                    next: create_shortlist_request_callback
+                  - condition: ${true}
+                    next: expire_shortlist
+    - call_shortlist:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/workflows/" + workflow_id + "/continue"}
+          timeout: 200
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            action: "shortlist"
+        result: shortlist_http
+    - read_shortlist:
+        assign:
+          - approval_id: ${json.decode(shortlist_http.body).approvalId}
+    - create_shortlist_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: shortlist_callback
+    - store_shortlist_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "shortlist_approval"
+            url: ${shortlist_callback.url}
+    - await_shortlist_approval:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${shortlist_callback}
+            timeout: 43200
+          result: shortlist_decision
+        except:
+          as: e
+          steps:
+            - shortlist_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null and shortlist_waits < 14}
+                    next: count_shortlist_wait
+                  - condition: ${true}
+                    next: expire_shortlist
+    - route_shortlist_decision:
+        switch:
+          - condition: ${shortlist_decision.http_request.body.decision == "approve"}
+            next: approve_shortlist
+          - condition: ${true}
+            next: reject_shortlist
+    - approve_shortlist:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/approvals/" + approval_id + "/approve"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            decision: "approve"
+            candidateIds: ${shortlist_decision.http_request.body.candidateIds}
+        result: schedule_http
+    - read_schedule:
+        assign:
+          - approval_id: ${json.decode(schedule_http.body).approvalId}
+        next: create_schedule_callback
+    - reject_shortlist:
+        assign:
+          - step: "shortlist_proposed"
+        next: create_shortlist_callback
+    - call_schedule:
+        assign:
+          - step: "schedule_proposed"
+    - create_schedule_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: schedule_callback
+    - store_schedule_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "schedule_approval"
+            url: ${schedule_callback.url}
+    - await_schedule_approval:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${schedule_callback}
+            timeout: 43200
+          result: schedule_decision
+        except:
+          as: e
+          steps:
+            - schedule_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null and schedule_waits < 14}
+                    next: count_schedule_wait
+                  - condition: ${true}
+                    next: expire_schedule
+    - route_schedule_decision:
+        switch:
+          - condition: ${schedule_decision.http_request.body.decision == "approve"}
+            next: approve_schedule
+          - condition: ${true}
+            next: reject_schedule
+    - approve_schedule:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/approvals/" + approval_id + "/approve"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            decision: "approve"
+        next: execute_send
+    - reject_schedule:
+        assign:
+          - step: "schedule_proposed"
+        next: create_schedule_callback
+    - execute_send:
+        steps:
+          - send_invite:
+              call: http.post
+              args:
+                url: ${agents_url + "/v1/execute/email.send"}
+                timeout: 60
+                auth:
+                  type: OIDC
+                  audience: ${agents_url}
+                body:
+                  workflowId: ${workflow_id}
+          - create_calendar_event:
+              call: http.post
+              args:
+                url: ${agents_url + "/v1/execute/calendar.create"}
+                timeout: 60
+                auth:
+                  type: OIDC
+                  audience: ${agents_url}
+                body:
+                  workflowId: ${workflow_id}
+    - create_record_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: record_callback
+    - store_record_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "record_hire"
+            url: ${record_callback.url}
+    - record_hire:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${record_callback}
+            timeout: 43200
+          result: record_decision
+        except:
+          as: e
+          steps:
+            - record_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null}
+                    next: create_record_callback
+                  - condition: ${true}
+                    next: end
+    - call_onboard:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/workflows/" + workflow_id + "/continue"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            action: "record_hire"
+        result: onboard_http
+    - read_onboarding:
+        assign:
+          - approval_id: ${json.decode(onboard_http.body).approvalId}
+    - create_onboarding_callback:
+        call: events.create_callback_endpoint
+        args:
+          http_callback_method: "POST"
+        result: onboarding_callback
+    - store_onboarding_callback:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/internal/callback-target"}
+          timeout: 30
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+            purpose: "onboarding_approval"
+            url: ${onboarding_callback.url}
+    - await_onboarding_approval:
+        try:
+          call: events.await_callback
+          args:
+            callback: ${onboarding_callback}
+            timeout: 43200
+          result: onboarding_decision
+        except:
+          as: e
+          steps:
+            - onboarding_timed_out:
+                switch:
+                  - condition: ${map.get(e.tags, "TimeoutError") != null and onboard_waits < 14}
+                    next: count_onboard_wait
+                  - condition: ${true}
+                    next: expire_onboarding
+    - route_onboarding_decision:
+        switch:
+          - condition: ${onboarding_decision.http_request.body.decision == "approve"}
+            next: approve_onboarding
+          - condition: ${true}
+            next: reject_onboarding
+    - approve_onboarding:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/approvals/" + approval_id + "/approve"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            decision: "approve"
+        next: execute_welcome
+    - reject_onboarding:
+        assign:
+          - step: "onboarding_proposed"
+        next: create_onboarding_callback
+    - execute_welcome:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/execute/email.send"}
+          timeout: 60
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            workflowId: ${workflow_id}
+        next: end
+    - count_ad_wait:
+        assign:
+          - ad_waits: ${ad_waits + 1}
+        next: create_ad_callback
+    - reject_ad_call:
+        call: http.post
+        args:
+          url: ${agents_url + "/v1/approvals/" + approval_id + "/reject"}
+          timeout: 200
+          auth:
+            type: OIDC
+            audience: ${agents_url}
+          body:
+            note: ${ad_decision.http_request.body.note}
+        next: create_ad_callback
+    - count_reject:
+        assign:
+          - hirer_revisions: ${hirer_revisions + 1}
+          - step: "ad_reviewed"
+        next: call_job_ad
+    - manual_edit:
+        assign:
+          - step: "ad_reviewed"
+        next: create_ad_callback
+    - count_shortlist_wait:
+        assign:
+          - shortlist_waits: ${shortlist_waits + 1}
+        next: create_shortlist_callback
+    - count_schedule_wait:
+        assign:
+          - schedule_waits: ${schedule_waits + 1}
+        next: create_schedule_callback
+    - count_onboard_wait:
+        assign:
+          - onboard_waits: ${onboard_waits + 1}
+        next: create_onboarding_callback
+    - expire_ad:
+        assign:
+          - step: "ad_reviewed"
+        next: end
+    - expire_shortlist:
+        assign:
+          - step: "shortlist_proposed"
+        next: end
+    - expire_schedule:
+        assign:
+          - step: "schedule_proposed"
+        next: end
+    - expire_onboarding:
+        assign:
+          - step: "onboarding_proposed"
+        next: end
+    - end:
+        return: ${step}

@@ -1,0 +1,6 @@
+.venv
+.git
+**/node_modules
+**/dist
+data/local
+**/.pytest_cache

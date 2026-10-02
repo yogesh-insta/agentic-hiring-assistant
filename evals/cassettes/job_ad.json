@@ -1,0 +1,16 @@
+{
+  "id": "job-ad-barista-fitzroy",
+  "brief": {
+    "role": "barista",
+    "location": "Fitzroy",
+    "hours": "weekends, part-time",
+    "pay": "about $32 an hour"
+  },
+  "output": {
+    "title": "Part-time barista",
+    "location": "Fitzroy",
+    "pay": "$32 per hour",
+    "hours": "Weekends, part-time",
+    "body": "We are hiring a part-time barista in Fitzroy for weekend shifts. The pay is $32 per hour. The work is coffee service, the bar, and closing."
+  }
+}
